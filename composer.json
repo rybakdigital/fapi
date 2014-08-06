@@ -1,0 +1,20 @@
+{
+    "name": "rybakdigital/fapi",
+    "type": "library",
+    "description": "The Flex API framework",
+    "keywords": ["framework", "api"],
+    "homepage": "http://fapi.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kris Rybak",
+            "email": "kris@krisrybak.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    }
+    "autoload": {
+        "psr-0": { "Fapi\\": "src/" }
+    }
+}
