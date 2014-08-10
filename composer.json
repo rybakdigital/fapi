@@ -17,5 +17,5 @@
     "autoload": {
         "psr-0": { "Fapi\\": "src/" }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "dev"
 }
