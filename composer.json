@@ -1,6 +1,6 @@
 {
     "name": "rybakdigital/fapi",
-    "type": "library",
+    "type": "project",
     "description": "The Flex API framework",
     "keywords": ["framework", "api"],
     "homepage": "http://fapi.com",
