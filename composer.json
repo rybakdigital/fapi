@@ -1,6 +1,6 @@
 {
     "name": "rybakdigital/fapi",
-    "type": "library",
+    "type": "project",
     "description": "The Flex API framework",
     "keywords": ["framework", "api"],
     "homepage": "http://fapi.com",
@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "symfony/http-foundation": "2.5.*"
     },
     "autoload": {
         "psr-0": { "Fapi\\": "src/" }
