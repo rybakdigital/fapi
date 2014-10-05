@@ -11,5 +11,22 @@ namespace Fapi\Component\HttpKernel;
  */
 abstract class Kernel
 {
+    /**
+     * Boot method. Starts all processes.
+     */
+    public function run()
+    {
+        $request = Request::createFromGlobals();
+        $this->handle($request);
+    }
 
+    /**
+     * Handles request.
+     *
+     * @param   Request     $request
+     */
+    public function handle(Request $request)
+    {
+
+    }
 }
