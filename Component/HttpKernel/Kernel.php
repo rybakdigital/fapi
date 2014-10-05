@@ -2,6 +2,8 @@
 
 namespace Fapi\Component\HttpKernel;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Fapi\Component\HttpKernel
  *
