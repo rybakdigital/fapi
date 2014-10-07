@@ -15,12 +15,22 @@ abstract class Kernel
 {
     protected $startTime;
 
+    protected $container;
+
     /**
      * Constructor.
      */
     public function __construct()
     {
         $this->startTime = microtime(true);
+    }
+
+    /**
+     * Gets container.
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**
