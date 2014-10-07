@@ -13,6 +13,16 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class Kernel
 {
+    protected $startTime;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->startTime = microtime(true);
+    }
+
     /**
      * Boot method. Starts all processes.
      */
