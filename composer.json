@@ -13,8 +13,8 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/http-kernel": "~3.0@dev",
-        "symfony/yaml": "~3.0@dev"
+        "symfony/http-foundation": "2.5.*",
+        "symfony/yaml": "2.5.*"
     },
     "autoload": {
         "psr-4": { "Fapi\\": "" }
