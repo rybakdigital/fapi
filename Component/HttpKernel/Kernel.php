@@ -15,6 +15,19 @@ use \ReflectionObject;
  */
 abstract class Kernel
 {
+    protected $container;
+    protected $startTime;
+    protected $rootDir;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->startTime    = microtime(true);
+        $this->rootDir      = $this->getRootDir();
+    }
+
     /**
      * Boot method. Starts all processes.
      */
@@ -31,5 +44,30 @@ abstract class Kernel
      */
     public function handle(Request $request)
     {
+    }
+
+    /**
+     * Gets the request start time.
+     *
+     * @return int The request start timestamp
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Gets root directory.
+     *
+     * @return string
+     */
+    public function getRootDir()
+    {
+        if (null === $this->rootDir) {
+            $r = new ReflectionObject($this);
+            $this->rootDir = str_replace('\\', '/', dirname($r->getFileName()));
+        }
+
+        return $this->rootDir;
     }
 }
