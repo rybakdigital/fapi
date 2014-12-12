@@ -3,6 +3,7 @@
 namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
+use Ucc\Component\Fundation\Config;
 use \ReflectionObject;
 
 /**
@@ -15,7 +16,7 @@ use \ReflectionObject;
  */
 abstract class Kernel
 {
-    protected $container;
+    protected $config;
     protected $startTime;
     protected $rootDir;
 
@@ -26,6 +27,7 @@ abstract class Kernel
     {
         $this->startTime    = microtime(true);
         $this->rootDir      = $this->getRootDir();
+        $this->config       = new Config();
     }
 
     /**
@@ -65,20 +67,20 @@ abstract class Kernel
     public function getRootDir()
     {
         if (null === $this->rootDir) {
-            $r = new ReflectionObject($this);
-            $this->rootDir = str_replace('\\', '/', dirname($r->getFileName()));
+            $reflection     = new ReflectionObject($this);
+            $this->rootDir  = str_replace('\\', '/', dirname($reflection->getFileName()));
         }
 
         return $this->rootDir;
     }
 
     /**
-     * Gets container.
+     * Gets config.
      *
-     * @return ContainerInterface
+     * @return ConfigInterface
      */
-    public function getContainer()
+    public function getConfig()
     {
-        return $this->container;
+        return $this->config;
     }
 }
