@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use \ReflectionObject;
 
 /**
- * Fapi\Component\HttpKernel
+ * Fapi\Component\HttpKernel\Kernel
  *
  * The Kernel is the heart of the Fapi system.
  * It turns Request into Response object.
@@ -34,7 +34,8 @@ abstract class Kernel
     public function run()
     {
         $request = Request::createFromGlobals();
-        $this->handle($request);
+
+        return $this->handle($request);
     }
 
     /**
@@ -69,5 +70,15 @@ abstract class Kernel
         }
 
         return $this->rootDir;
+    }
+
+    /**
+     * Gets container.
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 }
