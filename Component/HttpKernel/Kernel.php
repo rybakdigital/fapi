@@ -3,6 +3,7 @@
 namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
+use \ReflectionObject;
 
 /**
  * Fapi\Component\HttpKernel
