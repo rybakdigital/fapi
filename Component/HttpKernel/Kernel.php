@@ -47,6 +47,7 @@ abstract class Kernel
      */
     public function handle(Request $request)
     {
+        $this->loadConfig();
     }
 
     /**
@@ -82,5 +83,17 @@ abstract class Kernel
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Loads app Configuration.
+     *
+     * @return ConfigInterface
+     */
+    public function loadConfig()
+    {
+        $params = Yaml::parse('app/config/config.yml');
+
+        return $this;
     }
 }
