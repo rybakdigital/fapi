@@ -5,6 +5,7 @@ namespace Fapi\Component\HttpKernel;
 use Symfony\Component\HttpFoundation\Request;
 use Ucc\Config\Config;
 use \ReflectionObject;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Fapi\Component\HttpKernel\Kernel
@@ -92,7 +93,8 @@ abstract class Kernel
      */
     public function loadConfig()
     {
-        $params = Yaml::parse('app/config/config.yml');
+        $file   = file_get_contents($this->getRootDir() . '/config/config.yml');
+        $params = Yaml::parse($file);
 
         return $this;
     }
