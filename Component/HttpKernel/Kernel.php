@@ -3,9 +3,9 @@
 namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Yaml;
 use Ucc\Config\Config;
 use \ReflectionObject;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Fapi\Component\HttpKernel\Kernel
@@ -48,7 +48,7 @@ abstract class Kernel
      */
     public function handle(Request $request)
     {
-        $this->loadConfig();
+        $this->loadConfiguration();
     }
 
     /**
@@ -91,11 +91,42 @@ abstract class Kernel
      *
      * @return ConfigInterface
      */
-    public function loadConfig()
+    public function loadConfig($fileName)
     {
-        $file   = file_get_contents($this->getRootDir() . '/config/config.yml');
-        $params = Yaml::parse($file);
+        // Check if the given file exists
+        if (file_exists($fileName)) {
+            $file = file_get_contents($fileName);
+        } else {
+            // Soo the file can not be located
+            // Check in config folder
+            if (file_exists($this->getRootDir() . '/config/' . $fileName)) {
+                $file = file_get_contents($this->getRootDir() . '/config/' . $fileName);
+            } else {
+                throw new \InvalidArgumentException(sprintf('The file "%s" does not exist.', $fileName));
+            }
+        }
 
-        return $this;
+        $array  = Yaml::parse($file);
+
+        // Discover configuration
+        foreach ($array as $key => $params) {
+            // Import Resources
+            if ($key == 'imports') {
+                foreach ($params as $resource) {
+                    foreach ($resource as $key => $resourceName) {
+                        if ($key == 'resource') {
+                            $this->loadConfig($resourceName);
+                        }
+                    }
+                }
+            // Save parameters in the Config
+            } elseif ($key == 'parameters') {
+                foreach ($params as $key => $param) {
+                    $this->config->setParameter($key, $param);
+                }
+            }
+        }
+
+        return $this->config;
     }
 }
