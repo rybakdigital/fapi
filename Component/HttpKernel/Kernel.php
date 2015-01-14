@@ -4,6 +4,7 @@ namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Yaml;
+use Fapi\Component\Routing\Router;
 use Ucc\Config\Config;
 use \ReflectionObject;
 
@@ -49,6 +50,10 @@ abstract class Kernel
     public function handle(Request $request)
     {
         $this->loadConfiguration();
+
+        // Now that Configuration is loaded let's resolve controller
+        // for given request.
+        $this->resolveController($request);
     }
 
     /**
@@ -128,5 +133,44 @@ abstract class Kernel
         }
 
         return $this->config;
+    }
+
+    /**
+     * Resolves controller for a given request.
+     *
+     * @param   Request     $request
+     * @return  ControllerInterface
+     */
+    public function resolveController(Request $request)
+    {
+        // First let's get routing and ask routing to resolve route
+        $router = $this->getRouting();
+
+        $route = $router->resolveRoute();
+
+        $route->getController();
+
+        // return $this->getRouting()->resolveRoute()->getController();
+    }
+
+    /**
+     * Gets routing system.
+     *
+     * @return RouterInterface
+     */
+    public function getRouting()
+    {
+        // Check if router class has been defined in config parameters
+        if ($this->getConfig()->hasParameter('routing')) {
+            $routerClass = $this->getConfig()->getParameter('routing');
+
+            $router = new $routerClass();
+
+            return $router;
+        }
+
+        $router = new Router();
+
+        return $router;
     }
 }
