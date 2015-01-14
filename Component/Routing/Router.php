@@ -57,19 +57,6 @@ class Router implements RouterInterface
         return $this->resource;
     }
 
-    public function loadResurce($modulePath = NULL)
-    {
-        $include_paths  = explode(PATH_SEPARATOR, get_include_path());
-
-        foreach ($include_paths as $path) {
-            $modulePath = $this->resolveFilePathSlashes($modulePath);
-            if (file_exists("../app/config/" . $modulePath . "routing.php")) {
-               //var_dump('ok');
-            }
-            //var_dump( "../app/config/" . $modulePath . "routing.php");
-        }
-    }
-
     private function resolveFilePathSlashes($path)
     {
         if (false !== $lastPos = strrpos($path, '/')) {
@@ -84,7 +71,16 @@ class Router implements RouterInterface
         return $path;
     }
 
-    public function loadRouteCollection($resource = null)
+    public function loadRouteCollection()
+    {
+        $routes = array();
+
+        $routes = $this->loadResurce();
+
+        var_dump($routes);
+    }
+
+    public function loadResurce($resource = null)
     {
         $routes = array();
 
@@ -104,10 +100,13 @@ class Router implements RouterInterface
             $array  = Yaml::parse($file);
 
             if (is_array($array)) {
+
                 if (isset($array['imports'])) {
                     foreach ($array['imports'] as $import) {
                         if (isset($import['resource'])) {
-                            $this->loadRouteCollection($import['resource']);
+                            foreach ($this->loadResurce($import['resource']) as $name => $route) {
+                                $routes[$name] = $route;
+                            }
                         }
                     }
                 }
@@ -120,7 +119,6 @@ class Router implements RouterInterface
             }
         }
 
-
-        var_dump($routes);
+        return $routes;
     }
 }
