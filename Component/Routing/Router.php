@@ -3,6 +3,7 @@
 namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\RouterInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Fapi\Component\Routing\Router
