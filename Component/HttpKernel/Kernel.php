@@ -144,7 +144,7 @@ abstract class Kernel
     public function resolveController(Request $request)
     {
         // First let's get routing and ask routing to resolve route
-        $router = $this->getRouting();
+        $router = $this->getRouting($request);
 
         $route = $router->resolveRoute();
 
@@ -158,7 +158,7 @@ abstract class Kernel
      *
      * @return RouterInterface
      */
-    public function getRouting()
+    public function getRouting(Request $request)
     {
         // Check if router class has been defined in config parameters
         if ($this->getConfig()->hasParameter('routing')) {
@@ -169,7 +169,7 @@ abstract class Kernel
             return $router;
         }
 
-        $router = new Router();
+        $router = new Router($request);
 
         return $router;
     }
