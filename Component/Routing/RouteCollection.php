@@ -69,4 +69,14 @@ class RouteCollection
 
         return $this;
     }
+
+    /**
+     * Gets all routes.
+     *
+     * @return array    Array of Route objects.
+     */
+    public function all($name)
+    {
+        return $this->routes;
+    }
 }
