@@ -92,8 +92,20 @@ class Route
 
     public function addMethod($method)
     {
+        // Capitalise method
+        $method = strtoupper($method);
+
+        if (!in_array($method, self::$availableMethods)) {
+            throw new InvalidArgumentException(sprintf('Invalid method for route with path "%s". Method must be one of: ' . implode(', ', self::$availableMethods) . '. Got "%s" instead.', $this->getPath(), $method));
+        }
+
         if (!in_array($method, $this->methods)) {
-            $this->methods[] = strtoupper($method);
+            $this->methods[] = $method;
+        }
+
+        // Add HEAD method if GET has been allowed for this Route
+        if ($method == 'GET') {
+            $this->addMethod('HEAD');
         }
 
         return $this;
