@@ -5,6 +5,7 @@ namespace Fapi\Component\Routing;
 use Fapi\Component\Routing\RouterInterface;
 use Fapi\Component\Routing\Matcher;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fapi\Component\Routing\Router
@@ -28,21 +29,24 @@ class Router implements RouterInterface
     /**
      * @var Fapi\Component\Routing\RequestContext
      */
-    protected $requestContext;
+    protected $request;
 
     /**
      * @var mixed
      */
     protected $resource;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
         $this->matcher = new Matcher();
+        $this->request = $request;
     }
 
     public function resolveRoute()
     {
-        $routes = $this->getRouteCollection();
+        $this
+            ->matcher
+                ->match($this->getRouteCollection(), $this->request);
     }
 
     public function getRouteCollection()
@@ -79,11 +83,15 @@ class Router implements RouterInterface
 
     public function loadRouteCollection()
     {
-        $routes = array();
+        $collection = new RouteCollection();
 
         $routes = $this->loadResurce();
 
-        var_dump($routes);
+        foreach ($routes as $name => $route) {
+            $collection->add($name, $route);
+        }
+
+        return $collection;
     }
 
     public function loadResurce($resource = null)
