@@ -118,6 +118,10 @@ class Route
 
     public function setController($controller)
     {
+        if (empty($controller)) {
+            throw new InvalidArgumentException(sprintf('Missing controller for route with path "%s".', $this->getPath()));
+        }
+
         $this->controller = $controller;
 
         return $this;
@@ -130,6 +134,10 @@ class Route
 
     public function setCalls($callable)
     {
+        if (empty($callable)) {
+            throw new InvalidArgumentException(sprintf('Missing "calls" argument for route with path "%s".', $this->getPath()));
+        }
+
         $this->calls = $callable;
 
         return $this;
