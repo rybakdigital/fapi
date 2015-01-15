@@ -51,6 +51,17 @@ class Route
      */
     private $regex;
 
+    public function __construct($path = null, $methods = array(), $controller = null, $calls = null, $requirements = array(), $regex = null)
+    {
+        $this
+            ->setPath($path)
+            ->setMethods($methods)
+            ->setController($controller)
+            ->setCalls($calls)
+            ->setRequirements($requirements)
+            ->setRegex($regex);
+    }
+
     public function getPath()
     {
         return $this->path;
