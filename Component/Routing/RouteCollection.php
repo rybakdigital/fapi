@@ -24,11 +24,14 @@ class RouteCollection
      *
      * @param string $name  The route name
      * @param Route  $route A Route instance
+     * @return RouteCollection
      */
     public function add($name, Route $route)
     {
         unset($this->routes[$name]);
         $this->routes[$name] = $route;
+
+        return $this;
     }
 
     /**
@@ -41,5 +44,20 @@ class RouteCollection
     public function get($name)
     {
         return isset($this->routes[$name]) ? $this->routes[$name] : null;
+    }
+
+    /**
+     * Removes a route by name from the collection.
+     *
+     * @param string $name The Route name
+     * @return RouteCollection
+     */
+    public function remove($name)
+    {
+        if (isset($this->routes[$name])) {
+            unset($this->routes[$name]);
+        }
+
+        return $this;
     }
 }
