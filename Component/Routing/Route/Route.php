@@ -2,11 +2,15 @@
 
 namespace Fapi\Component\Routing\Route;
 
+use \InvalidArgumentException;
+
 /**
  * Fapi\Component\Routing\Route\Route
  */
 class Route
 {
+    public static $availableMethods = array('HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'PURGE', 'OPTIONS', 'TRACE', 'CONNECT');
+
     /**
      * Path of the Route
      *
@@ -47,6 +51,17 @@ class Route
      */
     private $regex;
 
+    public function __construct($path = null, $methods = array(), $controller = null, $calls = null, $requirements = array(), $regex = null)
+    {
+        $this
+            ->setPath($path)
+            ->setMethods($methods)
+            ->setController($controller)
+            ->setCalls($calls)
+            ->setRequirements($requirements)
+            ->setRegex($regex);
+    }
+
     public function getPath()
     {
         return $this->path;
@@ -77,8 +92,20 @@ class Route
 
     public function addMethod($method)
     {
+        // Capitalise method
+        $method = strtoupper($method);
+
+        if (!in_array($method, self::$availableMethods)) {
+            throw new InvalidArgumentException(sprintf('Invalid method for route with path "%s". Method must be one of: ' . implode(', ', self::$availableMethods) . '. Got "%s" instead.', $this->getPath(), $method));
+        }
+
         if (!in_array($method, $this->methods)) {
-            $this->methods[] = strtoupper($method);
+            $this->methods[] = $method;
+        }
+
+        // Add HEAD method if GET has been allowed for this Route
+        if ($method == 'GET') {
+            $this->addMethod('HEAD');
         }
 
         return $this;
@@ -91,6 +118,10 @@ class Route
 
     public function setController($controller)
     {
+        if (empty($controller)) {
+            throw new InvalidArgumentException(sprintf('Missing controller for route with path "%s".', $this->getPath()));
+        }
+
         $this->controller = $controller;
 
         return $this;
@@ -103,6 +134,10 @@ class Route
 
     public function setCalls($callable)
     {
+        if (empty($callable)) {
+            throw new InvalidArgumentException(sprintf('Missing "calls" argument for route with path "%s".', $this->getPath()));
+        }
+
         $this->calls = $callable;
 
         return $this;

@@ -3,8 +3,8 @@
 namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\Matcher\MatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Fapi\Component\Routing\RouteCollection;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fapi\Component\Routing\Matcher
@@ -24,13 +24,15 @@ class Matcher implements MatcherInterface
     /**
      * @var RouteCollection
      */
-    protected $routes;
+    protected $collection;
 
     /**
      * Matches current Request to Route
      */
-    public function match(RouteCollection $routes, Request $request)
+    public function match(RouteCollection $collection, Request $request)
     {
-
+        foreach ($collection as $route) {
+            var_dump($route);
+        }
     }
 }

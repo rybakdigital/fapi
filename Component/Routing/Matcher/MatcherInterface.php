@@ -15,5 +15,5 @@ interface MatcherInterface
     /**
      * Matches current Request to Route
      */
-    public function match(RouteCollection $routes, Request $request);
+    public function match(RouteCollection $collection, Request $request);
 }
