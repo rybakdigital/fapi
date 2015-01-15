@@ -2,11 +2,15 @@
 
 namespace Fapi\Component\Routing\Route;
 
+use \InvalidArgumentException;
+
 /**
  * Fapi\Component\Routing\Route\Route
  */
 class Route
 {
+    public static $availableMethods = array('HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'PURGE', 'OPTIONS', 'TRACE', 'CONNECT');
+
     /**
      * Path of the Route
      *
