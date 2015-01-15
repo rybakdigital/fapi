@@ -3,7 +3,7 @@
 namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\RouterInterface;
-use Fapi\Component\Routing\Martcher;
+use Fapi\Component\Routing\Matcher;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -37,7 +37,7 @@ class Router implements RouterInterface
 
     public function __construct()
     {
-        $this->matcher = new Martcher();
+        $this->matcher = new Matcher();
     }
 
     public function resolveRoute()
