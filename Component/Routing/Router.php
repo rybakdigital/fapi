@@ -4,6 +4,7 @@ namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\RouterInterface;
 use Fapi\Component\Routing\Matcher;
+use Fapi\Component\Routing\Route\Route;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -88,7 +89,7 @@ class Router implements RouterInterface
         $routes = $this->loadResurce();
 
         foreach ($routes as $name => $route) {
-            $collection->add($name, $route);
+            $collection->add($name, new Route);
         }
 
         return $collection;

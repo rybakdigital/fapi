@@ -2,6 +2,15 @@
 
 namespace Fapi\Component\Routing;
 
+use Fapi\Component\Routing\Route\Route;
+
+/**
+ * Fapi\Component\Routing\Router\RouteCollection
+ *
+ * This class provides methods to store and manipulate collection of Route objects
+ *
+ * @author  Kris Rybak <kris@krisrybak.com>
+ */
 class RouteCollection
 {
     /**
