@@ -89,7 +89,7 @@ class Router implements RouterInterface
         $routes = $this->loadResurce();
 
         foreach ($routes as $name => $route) {
-            $collection->add($name, new Route);
+            $collection->add($name, $this->parseRoute($route));
         }
 
         return $collection;
@@ -135,5 +135,19 @@ class Router implements RouterInterface
         }
 
         return $routes;
+    }
+
+    public function parseRoute($routeSpec)
+    {
+        $path           = isset($routeSpec['path']) ? $routeSpec['path'] : null;
+        $methods        = isset($routeSpec['methods']) ? $routeSpec['methods'] : array();
+        $controller     = isset($routeSpec['controller']) ? $routeSpec['controller'] : null;
+        $calls          = isset($routeSpec['calls']) ? $routeSpec['calls'] : null;
+        $requirements   = isset($routeSpec['requirements']) ? $routeSpec['requirements'] : array();
+        $regex          = isset($routeSpec['regex']) ? $routeSpec['regex'] : null;
+
+        $route = new Route($path, $methods, $controller, $calls, $requirements, $regex);
+
+        return $route;
     }
 }
