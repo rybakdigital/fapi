@@ -26,10 +26,23 @@ class Matcher implements MatcherInterface
      */
     protected $collection;
 
+    /**
+     * @var Voter
+     */
+    private $voter;
+
+    /**
+     * Array of valid Regex operands for Route
+     */
     private static $regexOperands = array(
         'int' => '\d+',
         'str' => '\w+',
     );
+
+    public function __construct()
+    {
+        $this->voter = new Voter();
+    }
 
     /**
      * Matches current Request to Route
@@ -41,9 +54,14 @@ class Matcher implements MatcherInterface
         $this->request      = $request;
 
         // Get candidates and ask Voter to decide which candidate mathes best
-        $this->candidates   = $this->getCandidates();
+        return $this->voter->vote($this->getCandidates(), $request);
     }
 
+    /**
+     * Gets list of candidate Route objects for request
+     *
+     * @return array    List of Route objects
+     */
     public function getCandidates()
     {
         $candidates = array();
@@ -79,18 +97,20 @@ class Matcher implements MatcherInterface
             $route->setRegex('/'.str_replace('/', '\/', $route->getRegex()).'/');
 
             if (preg_match($route->getRegex(), $this->request->getPathInfo())) {
-                // Check the rquest method matches route methods
-                if (in_array($this->request->getMethod(), $route->getMethods())) {
-
-                    // We have a match
-                    $candidates[] = $route;
-                }
+                // We have a match
+                $candidates[] = $route;
             }
         }
 
         return $candidates;
     }
 
+    /**
+     * Gets Regex operand for given requirement
+     *
+     * @param   string    $operand
+     * @return  string
+     */
     private function getRegexOperand($operand)
     {
         if (array_key_exists($operand, self::$regexOperands)) {
