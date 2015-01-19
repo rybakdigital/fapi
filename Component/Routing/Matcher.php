@@ -4,6 +4,7 @@ namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\Matcher\MatcherInterface;
 use Fapi\Component\Routing\RouteCollection;
+use Fapi\Component\Routing\Voter\Voter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
