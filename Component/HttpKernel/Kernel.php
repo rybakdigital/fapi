@@ -144,11 +144,20 @@ abstract class Kernel
     public function resolveController(Request $request)
     {
         // First let's get routing and ask routing to resolve route
-
-        return $this
+        $controllerClass =  $this
             ->getRouting($request)
                 ->resolveRoute()
                     ->getController();
+
+        // Check class and method are not empty
+        if (!empty($controllerClass)) {
+            // Check class exist
+            if (!class_exists($controllerClass)) {
+                throw new \Exception("Class ".$controllerClass." not found.");
+            }
+
+            return new $controllerClass;
+        }
     }
 
     /**
