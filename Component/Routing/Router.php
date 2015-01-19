@@ -43,6 +43,11 @@ class Router implements RouterInterface
         $this->request = $request;
     }
 
+    /**
+     * Resolves Route
+     *
+     * @return Route
+     */
     public function resolveRoute()
     {
         return $this
@@ -50,6 +55,11 @@ class Router implements RouterInterface
                 ->match($this->getRouteCollection(), $this->request);
     }
 
+    /**
+     * Gets RouteCollection
+     *
+     * @return RouteCollection
+     */
     public function getRouteCollection()
     {
         if (null === $this->collection) {
@@ -82,6 +92,11 @@ class Router implements RouterInterface
         return $path;
     }
 
+    /**
+     * Loads RouteCollection from resource
+     *
+     * @return RouteCollection
+     */
     public function loadRouteCollection()
     {
         $collection = new RouteCollection();
@@ -95,6 +110,9 @@ class Router implements RouterInterface
         return $collection;
     }
 
+    /**
+     * Loads array of routes from resource
+     */
     public function loadResurce($resource = null)
     {
         $routes = array();
@@ -137,6 +155,12 @@ class Router implements RouterInterface
         return $routes;
     }
 
+    /**
+     * Parses array of spec into Route object
+     *
+     * @param   array   Route spec
+     * @return  Route
+     */
     public function parseRoute($routeSpec)
     {
         $path           = isset($routeSpec['path']) ? $routeSpec['path'] : null;
