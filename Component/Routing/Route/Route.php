@@ -6,9 +6,14 @@ use \InvalidArgumentException;
 
 /**
  * Fapi\Component\Routing\Route\Route
+ *
+ * @author  Kris Rybak <kris@krisrybak.com>
  */
 class Route
 {
+    /**
+     * List of HTTP methods accepted by Route
+     */
     public static $availableMethods = array('HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'PURGE', 'OPTIONS', 'TRACE', 'CONNECT');
 
     /**
@@ -62,11 +67,22 @@ class Route
             ->setRegex($regex);
     }
 
+    /**
+     * Gets Path
+     *
+     * @return string
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * Sets Path
+     *
+     * @param   string  $pattern
+     * @return  Route
+     */
     public function setPath($pattern)
     {
         // A pattern must start with a slash and must not have multiple slashes at the beginning because the
@@ -76,11 +92,22 @@ class Route
         return $this;
     }
 
+    /**
+     * Gets methods
+     *
+     * @return  array       Array of methods accepted by Route
+     */
     public function getMethods()
     {
         return $this->methods;
     }
 
+    /**
+     * Sets methods
+     *
+     * @param   array       $methods    Array of methods to set for the Route
+     * @return  array       Array of methods accepted by Route
+     */
     public function setMethods(array $methods)
     {
         foreach ($methods as $method) {
@@ -90,6 +117,13 @@ class Route
         return $this;
     }
 
+    /**
+     * Adds method to array of methods accepted by Route
+     *
+     * @param   string  $method     Name of HTTP method to add
+     * @return  Route
+     * @throws  InvalidArgumentException
+     */
     public function addMethod($method)
     {
         // Capitalise method
@@ -111,11 +145,23 @@ class Route
         return $this;
     }
 
+    /**
+     * Gets Contorller
+     *
+     * @return string
+     */
     public function getController()
     {
         return $this->controller;
     }
 
+    /**
+     * Sets Contorller
+     *
+     * @param   string  $controller     Name of the controller to call by Route
+     * @return  Route
+     * @throws  InvalidArgumentException
+     */
     public function setController($controller)
     {
         if (empty($controller)) {
@@ -127,11 +173,23 @@ class Route
         return $this;
     }
 
+    /**
+     * Gets calls
+     *
+     * @return string
+     */
     public function getCalls()
     {
         return $this->calls;
     }
 
+    /**
+     * Sets calls
+     *
+     * @param   string  $callable   Name of the method to call by Route after resolving Controller
+     * @return  Route
+     * @throws  InvalidArgumentException
+     */
     public function setCalls($callable)
     {
         if (empty($callable)) {
@@ -143,11 +201,22 @@ class Route
         return $this;
     }
 
+    /**
+     * Gets requirements
+     *
+     * @return array
+     */
     public function getRequirements()
     {
         return $this->requirements;
     }
 
+    /**
+     * Sets requirements
+     *
+     * @param   array   requirements    Array of requirements for Route
+     * @return  Route
+     */
     public function setRequirements(array $requirements)
     {
         foreach ($requirements as $requirement => $type) {
@@ -157,6 +226,13 @@ class Route
         return $this;
     }
 
+    /**
+     * Adds requirement
+     *
+     * @param   string      $requirement        Requirements for Route
+     * @param   string      $type               Type of requirement
+     * @return  Route
+     */
     public function addRequirement($requirement, $type)
     {
         $this->requirements[$requirement] = strtolower($type);
@@ -164,11 +240,22 @@ class Route
         return $this;
     }
 
+    /**
+     * Gets regex
+     *
+     * @return string
+     */
     public function getRegex()
     {
         return $this->regex;
     }
 
+    /**
+     * Sets regex
+     *
+     * @param   string  $pattern    Regular Expression pattern of the Route
+     * @return  Route
+     */
     public function setRegex($pattern)
     {
         $this->regex = $pattern;
