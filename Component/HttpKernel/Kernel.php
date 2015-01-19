@@ -144,13 +144,11 @@ abstract class Kernel
     public function resolveController(Request $request)
     {
         // First let's get routing and ask routing to resolve route
-        $router = $this->getRouting($request);
 
-        $route = $router->resolveRoute();
-
-        $route->getController();
-
-        // return $this->getRouting()->resolveRoute()->getController();
+        return $this
+            ->getRouting($request)
+                ->resolveRoute()
+                    ->getController();
     }
 
     /**
