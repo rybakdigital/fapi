@@ -3,7 +3,10 @@
 namespace Fapi\Component\Routing;
 
 use Fapi\Component\Routing\RouterInterface;
+use Fapi\Component\Routing\Matcher;
+use Fapi\Component\Routing\Route\Route;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fapi\Component\Routing\Router
@@ -27,16 +30,24 @@ class Router implements RouterInterface
     /**
      * @var Fapi\Component\Routing\RequestContext
      */
-    protected $requestContext;
+    protected $request;
 
     /**
      * @var mixed
      */
     protected $resource;
 
+    public function __construct(Request $request)
+    {
+        $this->matcher = new Matcher();
+        $this->request = $request;
+    }
+
     public function resolveRoute()
     {
-        $routes = $this->getRouteCollection();
+        return $this
+            ->matcher
+                ->match($this->getRouteCollection(), $this->request);
     }
 
     public function getRouteCollection()
@@ -57,19 +68,6 @@ class Router implements RouterInterface
         return $this->resource;
     }
 
-    public function loadResurce($modulePath = NULL)
-    {
-        $include_paths  = explode(PATH_SEPARATOR, get_include_path());
-
-        foreach ($include_paths as $path) {
-            $modulePath = $this->resolveFilePathSlashes($modulePath);
-            if (file_exists("../app/config/" . $modulePath . "routing.php")) {
-               //var_dump('ok');
-            }
-            //var_dump( "../app/config/" . $modulePath . "routing.php");
-        }
-    }
-
     private function resolveFilePathSlashes($path)
     {
         if (false !== $lastPos = strrpos($path, '/')) {
@@ -84,7 +82,20 @@ class Router implements RouterInterface
         return $path;
     }
 
-    public function loadRouteCollection($resource = null)
+    public function loadRouteCollection()
+    {
+        $collection = new RouteCollection();
+
+        $routes = $this->loadResurce();
+
+        foreach ($routes as $name => $route) {
+            $collection->add($name, $this->parseRoute($route));
+        }
+
+        return $collection;
+    }
+
+    public function loadResurce($resource = null)
     {
         $routes = array();
 
@@ -104,10 +115,13 @@ class Router implements RouterInterface
             $array  = Yaml::parse($file);
 
             if (is_array($array)) {
+
                 if (isset($array['imports'])) {
                     foreach ($array['imports'] as $import) {
                         if (isset($import['resource'])) {
-                            $this->loadRouteCollection($import['resource']);
+                            foreach ($this->loadResurce($import['resource']) as $name => $route) {
+                                $routes[$name] = $route;
+                            }
                         }
                     }
                 }
@@ -120,7 +134,20 @@ class Router implements RouterInterface
             }
         }
 
+        return $routes;
+    }
 
-        var_dump($routes);
+    public function parseRoute($routeSpec)
+    {
+        $path           = isset($routeSpec['path']) ? $routeSpec['path'] : null;
+        $methods        = isset($routeSpec['methods']) ? $routeSpec['methods'] : array();
+        $controller     = isset($routeSpec['controller']) ? $routeSpec['controller'] : null;
+        $calls          = isset($routeSpec['calls']) ? $routeSpec['calls'] : null;
+        $requirements   = isset($routeSpec['requirements']) ? $routeSpec['requirements'] : array();
+        $regex          = isset($routeSpec['path']) ? $routeSpec['path'] : null;
+
+        $route = new Route($path, $methods, $controller, $calls, $requirements, $regex);
+
+        return $route;
     }
 }
