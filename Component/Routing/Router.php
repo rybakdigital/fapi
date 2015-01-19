@@ -45,7 +45,7 @@ class Router implements RouterInterface
 
     public function resolveRoute()
     {
-        $this
+        return $this
             ->matcher
                 ->match($this->getRouteCollection(), $this->request);
     }
@@ -144,7 +144,7 @@ class Router implements RouterInterface
         $controller     = isset($routeSpec['controller']) ? $routeSpec['controller'] : null;
         $calls          = isset($routeSpec['calls']) ? $routeSpec['calls'] : null;
         $requirements   = isset($routeSpec['requirements']) ? $routeSpec['requirements'] : array();
-        $regex          = isset($routeSpec['regex']) ? $routeSpec['regex'] : null;
+        $regex          = isset($routeSpec['path']) ? $routeSpec['path'] : null;
 
         $route = new Route($path, $methods, $controller, $calls, $requirements, $regex);
 
