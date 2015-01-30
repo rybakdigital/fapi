@@ -2,6 +2,8 @@
 
 namespace Fapi\Component\Framework\Controller;
 
+use Ucc\Data\Validator\Validator;
+
 /**
  * Fapi\Component\Framework\Controller\Controller
  *
