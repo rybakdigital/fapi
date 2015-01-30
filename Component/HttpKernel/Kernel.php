@@ -4,6 +4,7 @@ namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Yaml;
+use Fapi\Component\Routing\Router;
 use Ucc\Config\Config;
 use \ReflectionObject;
 
@@ -49,6 +50,15 @@ abstract class Kernel
     public function handle(Request $request)
     {
         $this->loadConfiguration();
+
+        // Now that Configuration is loaded let's resolve controller
+        // for given request.
+        $calls = $this->resolveController($request);
+        $controller = $calls['controller'];
+        $callable   = $calls['callable'];
+
+        // Resolve arguments before calling controller
+        $controller->$callable();
     }
 
     /**
@@ -97,7 +107,7 @@ abstract class Kernel
         if (file_exists($fileName)) {
             $file = file_get_contents($fileName);
         } else {
-            // Soo the file can not be located
+            // So the file can not be located
             // Check in config folder
             if (file_exists($this->getRootDir() . '/config/' . $fileName)) {
                 $file = file_get_contents($this->getRootDir() . '/config/' . $fileName);
@@ -128,5 +138,64 @@ abstract class Kernel
         }
 
         return $this->config;
+    }
+
+    /**
+     * Resolves controller for a given request.
+     *
+     * @param   Request     $request
+     * @return  array       array(ControllerInterface, callable)
+     */
+    public function resolveController(Request $request)
+    {
+        // First let's get routing and ask routing to resolve route
+        $route = $this
+            ->getRouting($request)
+                ->resolveRoute();
+
+        // Get Controller class name
+        $controllerClass    = $route->getController();
+
+        // Get Callable name
+        $callable           = $route->getCalls();
+
+        // Check class and method are not empty
+        if (!empty($controllerClass)) {
+            // Check class exist
+            if (!class_exists($controllerClass)) {
+                throw new \Exception("Class ".$controllerClass." not found.");
+            }
+
+            // Check method exists
+            if (!method_exists($controllerClass, $callable)) {
+                throw new \Exception("Method ".$callable." not found in class " . $controllerClass);
+            }
+
+            return array(
+                'controller'    => new $controllerClass,
+                'callable'      => $callable
+            );
+        }
+    }
+
+    /**
+     * Gets routing system.
+     *
+     * @return RouterInterface
+     */
+    public function getRouting(Request $request)
+    {
+        // Check if router class has been defined in config parameters
+        if ($this->getConfig()->hasParameter('routing')) {
+            $routerClass = $this->getConfig()->getParameter('routing');
+
+            $router = new $routerClass();
+
+            return $router;
+        }
+
+        $router = new Router($request);
+
+        return $router;
     }
 }
