@@ -17,6 +17,11 @@ class Controller
      */
     protected $validator;
 
+    public function __construct()
+    {
+        $this->setValidator = new Validator();
+    }
+
     /**
      * Gets Validator
      *

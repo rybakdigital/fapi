@@ -53,7 +53,12 @@ abstract class Kernel
 
         // Now that Configuration is loaded let's resolve controller
         // for given request.
-        $this->resolveController($request);
+        $calls = $this->resolveController($request);
+        $controller = $calls['controller'];
+        $callable   = $calls['callable'];
+
+        // Resolve arguments before calling controller
+        $controller->$callable();
     }
 
     /**
@@ -102,7 +107,7 @@ abstract class Kernel
         if (file_exists($fileName)) {
             $file = file_get_contents($fileName);
         } else {
-            // Soo the file can not be located
+            // So the file can not be located
             // Check in config folder
             if (file_exists($this->getRootDir() . '/config/' . $fileName)) {
                 $file = file_get_contents($this->getRootDir() . '/config/' . $fileName);
@@ -139,15 +144,20 @@ abstract class Kernel
      * Resolves controller for a given request.
      *
      * @param   Request     $request
-     * @return  ControllerInterface
+     * @return  array       array(ControllerInterface, callable)
      */
     public function resolveController(Request $request)
     {
         // First let's get routing and ask routing to resolve route
-        $controllerClass =  $this
+        $route = $this
             ->getRouting($request)
-                ->resolveRoute()
-                    ->getController();
+                ->resolveRoute();
+
+        // Get Controller class name
+        $controllerClass    = $route->getController();
+
+        // Get Callable name
+        $callable           = $route->getCalls();
 
         // Check class and method are not empty
         if (!empty($controllerClass)) {
@@ -156,7 +166,15 @@ abstract class Kernel
                 throw new \Exception("Class ".$controllerClass." not found.");
             }
 
-            return new $controllerClass;
+            // Check method exists
+            if (!method_exists($controllerClass, $callable)) {
+                throw new \Exception("Method ".$callable." not found in class " . $controllerClass);
+            }
+
+            return array(
+                'controller'    => new $controllerClass,
+                'callable'      => $callable
+            );
         }
     }
 
