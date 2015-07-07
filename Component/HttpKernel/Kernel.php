@@ -118,21 +118,24 @@ abstract class Kernel
 
         $array  = Yaml::parse($file);
 
-        // Discover configuration
-        foreach ($array as $key => $params) {
-            // Import Resources
-            if ($key == 'imports') {
-                foreach ($params as $resource) {
-                    foreach ($resource as $key => $resourceName) {
-                        if ($key == 'resource') {
-                            $this->loadConfig($resourceName);
+        // make sure we dealing with array first
+        if (is_array($array)) {
+            // Discover configuration
+            foreach ($array as $key => $params) {
+                // Import Resources
+                if ($key == 'imports') {
+                    foreach ($params as $resource) {
+                        foreach ($resource as $key => $resourceName) {
+                            if ($key == 'resource') {
+                                $this->loadConfig($resourceName);
+                            }
                         }
                     }
-                }
-            // Save parameters in the Config
-            } elseif ($key == 'parameters') {
-                foreach ($params as $key => $param) {
-                    $this->config->setParameter($key, $param);
+                // Save parameters in the Config
+                } elseif ($key == 'parameters') {
+                    foreach ($params as $key => $param) {
+                        $this->config->setParameter($key, $param);
+                    }
                 }
             }
         }
