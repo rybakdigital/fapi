@@ -3,6 +3,7 @@
 namespace Fapi\Component\Framework\Controller;
 
 use Ucc\Data\Validator\Validator;
+use Ucc\Data\Validator\ValidatorInterface;
 
 /**
  * Fapi\Component\Framework\Controller\Controller
@@ -21,7 +22,7 @@ class Controller
 
     public function __construct()
     {
-        $this->setValidator = new Validator();
+        $this->setValidator(new Validator());
     }
 
     /**
