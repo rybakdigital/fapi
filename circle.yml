@@ -3,4 +3,4 @@ machine:
     version: 5.6.5
 test:
   override:
-    - phpunit
+    - phpunit --configuration travis.phpunit.xml

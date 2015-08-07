@@ -11,4 +11,4 @@ php:
   - hhvm
 
 script:
-  - phpunit
+  - phpunit --configuration travis.phpunit.xml
