@@ -26,12 +26,14 @@
             lowUpperBound="35"
             highLowerBound="70"/>
     </logging>
+    <testsuites>
+        <testsuite name="Framework Test Suite">
+            <directory>./Component/Framework/Tests/</directory>
+        </testsuite>
+    </testsuites>
     <filter>
-        <whitelist>
-            <directory>./</directory>
-            <exclude>
-                <directory>./vendor</directory>
-            </exclude>
-        </whitelist>
+        <blacklist processUncoveredFilesFromWhitelist="false">
+            <directory>./vendor</directory>
+        </blacklist>
     </filter>
 </phpunit>
