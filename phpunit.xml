@@ -30,6 +30,9 @@
         <testsuite name="Framework Test Suite">
             <directory>./Component/Framework/Tests/</directory>
         </testsuite>
+        <testsuite name="Routing Test Suite">
+            <directory>./Component/Routing/Tests/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist processUncoveredFilesFromWhitelist="false">
