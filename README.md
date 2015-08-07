@@ -1,6 +1,9 @@
 fapi
 ====
 
+[![Build Status](https://travis-ci.org/rybakdigital/fapi.svg)](https://travis-ci.org/rybakdigital/fapi)
+[![Circle CI](https://circleci.com/gh/rybakdigital/fapi.svg?style=svg)](https://circleci.com/gh/rybakdigital/fapi)
+
 Flex API
 
 ##Setup for Developers
