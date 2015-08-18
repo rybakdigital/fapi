@@ -55,6 +55,26 @@ class RouteCollectionTest extends TestCase
         $this->assertSame($route->getMethods(), $expectedMethods);
     }
 
+    public function routeProviderForAddFail()
+    {
+        return array(
+            array(new \StdClass()),
+            array(array()),
+            array('route'),
+            array(123),
+        );
+    }
+
+    /**
+     * @dataProvider            routeProviderForAddFail
+     */
+    public function testAddFail($route)
+    {
+        $this->setExpectedException(get_class(new \PHPUnit_Framework_Error("",0,"",1)));
+        $routeCollection = new RouteCollection;
+        $this->assertInstanceOf(get_class($routeCollection), $routeCollection->add('test', $route));
+    }
+
     public function routeCollectionProviderForGet()
     {
         $routeCollection = new RouteCollection;
