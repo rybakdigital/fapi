@@ -34,4 +34,33 @@ class RouterTest extends TestCase
         $router = new Router(new Request);
         $this->assertInstanceOf('Fapi\Component\Routing\Route\Route', $router->parseRoute($routeSpec));
     }
+
+    public function resourceProvider()
+    {
+        return array(
+            array(
+                "fapi/Component/Routing/Tests/_resources/routing.yml",
+                4
+            ),
+            array(
+                "fapi/Component/Routing/Tests/_resources",
+                4
+            ),
+            array(
+                null,
+                0
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider resourceProvider
+     */
+    public function testLoadResurce($resource, $expectedCount)
+    {
+        $router = new Router(new Request);
+        $routes = $router->loadResurce($resource);
+        $this->assertTrue(is_array($routes));
+        $this->assertCount($expectedCount, $routes);
+    }
 }
