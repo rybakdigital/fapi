@@ -17,6 +17,12 @@ class RouterTest extends TestCase
                 'methods'       => array('POST', 'PUT'),
                 'calls'         => 'index',
             )),
+            array(array(
+                'path'          => '',
+                'controller'    => 'Orders',
+                'calls'         => 'index',
+                'requirements'  => array('id' => 'int'),
+            )),
         );
     }
 
@@ -26,7 +32,6 @@ class RouterTest extends TestCase
     public function testParseRoute($routeSpec)
     {
         $router = new Router(new Request);
-
         $this->assertInstanceOf('Fapi\Component\Routing\Route\Route', $router->parseRoute($routeSpec));
     }
 }
