@@ -63,4 +63,15 @@ class RouterTest extends TestCase
         $this->assertTrue(is_array($routes));
         $this->assertCount($expectedCount, $routes);
     }
+
+    /**
+     * @dataProvider resourceProvider
+     */
+    public function testloadRouteCollection($resource, $expectedCount)
+    {
+        $router = new Router(new Request);
+        $routes = $router->loadRouteCollection($resource);
+        $this->assertInstanceOf('Fapi\Component\Routing\RouteCollection', $routes);
+        $this->assertEquals($expectedCount, $routes->count());
+    }
 }

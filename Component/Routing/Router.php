@@ -95,13 +95,14 @@ class Router implements RouterInterface
     /**
      * Loads RouteCollection from resource
      *
-     * @return RouteCollection
+     * @param   string      $resource   Path to resource
+     * @return  RouteCollection
      */
-    public function loadRouteCollection()
+    public function loadRouteCollection($resource = null)
     {
         $collection = new RouteCollection();
 
-        $routes = $this->loadResurce();
+        $routes = $this->loadResurce($resource);
 
         foreach ($routes as $name => $route) {
             $collection->add($name, $this->parseRoute($route));
