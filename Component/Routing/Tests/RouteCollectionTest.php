@@ -54,4 +54,33 @@ class RouteCollectionTest extends TestCase
         $expectedMethods = $routeCollection->get($route->getCalls())->getMethods();
         $this->assertSame($route->getMethods(), $expectedMethods);
     }
+
+    public function routeCollectionProviderForGet()
+    {
+        $routeCollection = new RouteCollection;
+        $routes = array(
+            $route1 = new Route('/', array('GET'), 'Orders', 'getAll'),
+            $route2 = new Route('/products', array('GET', 'POST'), 'Producs', 'get'),
+            $route3 = new Route(null, array('PUT'), 'Home', 'getHome'),
+        );
+
+        foreach ($routes as $route) {
+            $routeCollection->add($route->getCalls(), $route);
+        }
+
+        return array(
+            array($routeCollection, 'getAll', $route1),
+            array($routeCollection, 'get', $route2),
+            array($routeCollection, 'getHome', $route3),
+            array($routeCollection, 'someRouteThatDoesNotExist', null),
+        );
+    }
+
+    /**
+     * @dataProvider routeCollectionProviderForGet
+     */
+    public function testGet($routeCollection, $name, $expected)
+    {
+        $this->assertSame($routeCollection->get($name), $expected);
+    }
 }
