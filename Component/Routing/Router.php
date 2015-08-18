@@ -112,6 +112,9 @@ class Router implements RouterInterface
 
     /**
      * Loads array of routes from resource
+     *
+     * @param   string      $resource   Path to resource
+     * @return  array       Array of routes
      */
     public function loadResurce($resource = null)
     {
