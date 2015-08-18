@@ -5,6 +5,7 @@ namespace Fapi\Component\Routing\Tests\Route;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Fapi\Component\Routing\Route\Route;
 use Fapi\Component\Routing\RouteCollection;
+use \PHPUnit_Framework_Error;
 
 class RouteCollectionTest extends TestCase
 {
@@ -70,7 +71,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testAddFail($route)
     {
-        $this->setExpectedException(get_class(new \PHPUnit_Framework_Error("",0,"",1)));
+        $this->setExpectedException(get_class(new PHPUnit_Framework_Error("",0,"",1)));
         $routeCollection = new RouteCollection;
         $this->assertInstanceOf(get_class($routeCollection), $routeCollection->add('test', $route));
     }
