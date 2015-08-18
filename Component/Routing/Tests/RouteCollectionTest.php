@@ -83,4 +83,61 @@ class RouteCollectionTest extends TestCase
     {
         $this->assertSame($routeCollection->get($name), $expected);
     }
+
+    public function routeCollectionProviderForRemove()
+    {
+        $routeCollection = new RouteCollection;
+        $routes = array(
+            $route1 = new Route('/', array('GET'), 'Orders', 'getAll'),
+            $route2 = new Route('/products', array('GET', 'POST'), 'Producs', 'get'),
+            $route3 = new Route(null, array('PUT'), 'Home', 'getHome'),
+        );
+
+        foreach ($routes as $route) {
+            $routeCollection->add($route->getCalls(), $route);
+        }
+
+        return array(
+
+        );
+    }
+
+    public function testRemove()
+    {
+        $routeCollection = new RouteCollection;
+        $routes = array(
+            $route1 = new Route('/', array('GET'), 'Orders', 'getAll'),
+            $route2 = new Route('/products', array('GET', 'POST'), 'Producs', 'get'),
+            $route3 = new Route(null, array('PUT'), 'Home', 'getHome'),
+        );
+
+        foreach ($routes as $route) {
+            $routeCollection->add($route->getCalls(), $route);
+        }
+
+        // First check route exists
+        $this->assertSame($routeCollection->get('getAll'), $route1);
+        // Remove route
+        $this->assertInstanceOf(get_class($routeCollection), $routeCollection->remove('getAll'));
+        // Confirm route is gone
+        $this->assertSame($routeCollection->get('getAll'), null);
+    }
+
+    public function testAll()
+    {
+        $routeCollection = new RouteCollection;
+        $expected = array();
+        $routes = array(
+            $route1 = new Route('/', array('GET'), 'Orders', 'getAll'),
+            $route2 = new Route('/products', array('GET', 'POST'), 'Producs', 'get'),
+            $route3 = new Route(null, array('PUT'), 'Home', 'getHome'),
+        );
+
+        foreach ($routes as $route) {
+            $routeCollection->add($route->getCalls(), $route);
+            $expected[$route->getCalls()] = $route;
+        }
+
+        $this->assertSame($routeCollection->all(), $expected);
+    }
 }
