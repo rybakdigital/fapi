@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rybakdigital/ucc.git",
-                "reference": "04d7dae233025ecbfaee06c60ca9e0787a0b655c"
+                "reference": "208f4c4f4e6b5bf169b3920cbbc71ff88f8e9e38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rybakdigital/ucc/zipball/04d7dae233025ecbfaee06c60ca9e0787a0b655c",
-                "reference": "04d7dae233025ecbfaee06c60ca9e0787a0b655c",
+                "url": "https://api.github.com/repos/rybakdigital/ucc/zipball/208f4c4f4e6b5bf169b3920cbbc71ff88f8e9e38",
+                "reference": "208f4c4f4e6b5bf169b3920cbbc71ff88f8e9e38",
                 "shasum": ""
             },
             "require": {
@@ -37,7 +37,7 @@
                 }
             ],
             "description": "Universal Class Collection",
-            "time": "2015-08-06 11:07:33"
+            "time": "2015-08-19 15:29:40"
         },
         {
             "name": "symfony/http-foundation",
