@@ -1,5 +1,6 @@
 imports:
     - { resource: fapi/Component/Routing/Tests/_resources/routing_extra.yml }
+    - { resource: fapi/Component/Routing/Tests/_resources/more }
 routes:
     saveOrders:
         path:   /

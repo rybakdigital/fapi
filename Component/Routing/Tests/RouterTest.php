@@ -40,11 +40,15 @@ class RouterTest extends TestCase
         return array(
             array(
                 "fapi/Component/Routing/Tests/_resources/routing.yml",
-                4
+                5
             ),
             array(
                 "fapi/Component/Routing/Tests/_resources",
-                4
+                5
+            ),
+            array(
+                "fapi/Component/Routing/Tests/_resources/more",
+                2
             ),
             array(
                 null,
@@ -77,6 +81,27 @@ class RouterTest extends TestCase
         $routes = $router->loadRouteCollection($resource);
         $this->assertInstanceOf('Fapi\Component\Routing\RouteCollection', $routes);
         $this->assertEquals($expectedCount, $routes->count());
+    }
+
+    public function sourceProvider()
+    {
+        return array(
+            array(null, '../app/config/routing.yml'),
+            array('vendor/MyApp/routing.json', '../vendor/MyApp/routing.json'),
+            array('vendor/MyApp/routing_extra.yml', '../vendor/MyApp/routing_extra.yml'),
+            array('vendor/MyApp', '../vendor/MyApp/routing.yml'),
+            array('../vendor/MyApp', '../../vendor/MyApp/routing.yml'),
+        );
+    }
+
+    /**
+     * @dataProvider sourceProvider
+     */
+    public function testResolveResorceSource($source, $expected)
+    {
+        $router = new Router(new Request);
+        $this->assertEquals($expected, $router->resolveResorceSource($source));
+        $this->assertTrue(is_string($router->resolveResorceSource($source)));
     }
 
     // public function testGetResource()

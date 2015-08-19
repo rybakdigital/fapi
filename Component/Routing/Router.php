@@ -125,30 +125,50 @@ class Router implements RouterInterface
     }
 
     /**
-     * Loads array of routes from resource
+     * Resolves name of the file to get resource from
      *
-     * @param   string      $resource   Path to resource
-     * @return  array       Array of routes
+     * @param   string      $source
+     * @return  string      File to get resource from
      */
-    public function loadResource($resource = null)
+    public function resolveResorceSource($source = null)
     {
-        $routes = array();
-
+        // Base path to use
         $basePath = '../';
 
-        if ($resource == null) {
-            $resource = "app/config/routing.yml";
+        // if no source has been specified
+        // look up default source
+
+        if ($source == null) {
+            $source = "app/config/routing.yml";
         }
 
-        $extension = Path::getExtension($resource);
+        // Check resource extension
+        $extension = Path::getExtension($source);
 
-        if (!in_array($extension, array('yml', 'json'))) {
-            $resource = $resource . '/routing.yml';
-            $extension = 'yml';
+        // Check if source is of a known type
+        // And if not then use default: routing.yml
+        if (!in_array($extension, self::$knownSourceTypes)) {
+            $source = $source . '/routing.yml';
         }
 
-        if (file_exists($basePath . $resource)) {
-            $file = file_get_contents($basePath . $resource);
+        return $basePath . $source;
+    }
+
+    /**
+     * Loads array of routes from resource
+     *
+     * @param   string      $source   Path to resource
+     * @return  array       Array of routes
+     */
+    public function loadResource($source = null)
+    {
+
+        $routes     = array();
+        $source     = $this->resolveResorceSource($source);
+        $extension  = Path::getExtension($source);
+
+        if (file_exists($source)) {
+            $file = file_get_contents($source);
 
             if ($extension == 'yml') {
                 $array  = Yaml::parse($file);
@@ -163,6 +183,7 @@ class Router implements RouterInterface
                 if (isset($array['imports'])) {
                     foreach ($array['imports'] as $import) {
                         if (isset($import['resource'])) {
+                            $extraSource = $this->resolveResorceSource($import['resource']);
                             foreach ($this->loadResource($import['resource']) as $name => $route) {
                                 $routes[$name] = $route;
                             }
