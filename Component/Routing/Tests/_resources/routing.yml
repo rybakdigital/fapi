@@ -16,7 +16,7 @@ routes:
 
     readOrder:
         path:   v1/orders/{orderSpec}
-        methods: ['GET', 'PUT']
+        methods: ['GET', 'PUT', 'POST']
         controller: orders
         calls: readRequest
         requirements:

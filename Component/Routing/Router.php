@@ -54,11 +54,11 @@ class Router implements RouterInterface
      *
      * @return Route
      */
-    public function resolveRoute()
+    public function resolveRoute($source = null)
     {
         return $this
             ->matcher
-                ->match($this->getRouteCollection(), $this->request);
+                ->match($this->getRouteCollection($source), $this->request);
     }
 
     /**
@@ -66,56 +66,35 @@ class Router implements RouterInterface
      *
      * @return RouteCollection
      */
-    public function getRouteCollection()
+    public function getRouteCollection($source = null)
     {
         if (null === $this->collection) {
-            $this->collection = $this->loadRouteCollection();
+            $this->collection = $this->loadRouteCollection($source);
         }
 
         return $this->collection;
     }
 
-    public function getResourse()
+    public function getResourse($source = null)
     {
         if (null === $this->resource) {
-            $this->resource = $this->loadResource();
+            $this->resource = $this->loadResource($source);
         }
 
         return $this->resource;
     }
 
     /**
-     * Resolves path slashes
+     * Loads RouteCollection from source
      *
-     * @param   string      $path   Path to resource
-     * @return  string
-     */
-    private function resolveFilePathSlashes($path)
-    {
-        if (false !== $lastPos = strrpos($path, '/')) {
-            if (($lastPos + 1) != strlen($path)) {
-                $path = $path.'/';
-            }
-        }
-
-        if (0 == $firstPos = strpos($path, '/')) {
-            $path = substr($path, 1);
-        }
-        
-        return $path;
-    }
-
-    /**
-     * Loads RouteCollection from resource
-     *
-     * @param   string      $resource   Path to resource
+     * @param   string      $source   Path to resource
      * @return  RouteCollection
      */
-    public function loadRouteCollection($resource = null)
+    public function loadRouteCollection($source = null)
     {
         $collection = new RouteCollection();
 
-        $routes = $this->loadResource($resource);
+        $routes = $this->loadResource($source);
 
         foreach ($routes as $name => $route) {
             $collection->add($name, $this->parseRoute($route));
@@ -197,6 +176,8 @@ class Router implements RouterInterface
                 }
             }
         }
+
+        $this->resource = $routes;
 
         return $routes;
     }

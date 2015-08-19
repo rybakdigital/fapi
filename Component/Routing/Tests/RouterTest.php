@@ -124,9 +124,81 @@ class RouterTest extends TestCase
         $this->assertTrue(is_string($router->resolveResorceSource($source)));
     }
 
-    // public function testGetResource()
-    // {
-    //     $router = new Router(new Request);
-    //     var_dump($router->getResourse());die;
-    // }
+    public function sourceProviderForResource()
+    {
+        return array(
+            array(
+                'fapi/Component/Routing/Tests/_resources/routing.json',
+                array(
+                    'getProducts' => array(
+                            'path'          => 'products',
+                            'methods'       => array('GET'),
+                            'controller'    => 'products',
+                            'calls'         => 'index',
+                    ),
+                ),
+            ),
+            array(null, array()),
+        );
+    }
+
+    /**
+     * @dataProvider sourceProviderForResource
+     */
+    public function testGetResource($source, $expected)
+    {
+        $router = new Router(new Request);
+        $this->assertSame($router->getResourse($source), $expected);
+    }
+
+    public function testGetRouteCollection()
+    {
+        $router = new Router(new Request);
+        $this->assertInstanceOf('Fapi\Component\Routing\RouteCollection', $router->getRouteCollection());
+    }
+
+    public function pathProvider()
+    {
+        return array(
+            array('/'),
+            array('/v1/orders/1'),
+        );
+    }
+
+    /**
+     * @dataProvider pathProvider
+     */
+    public function testResolveRoute($uri)
+    {
+        $source = 'fapi/Component/Routing/Tests/_resources/routing.yml';
+        $request = new Request();
+        $request
+            ->server
+                ->set('REQUEST_URI', $uri);
+        $router = new Router($request);
+        $this->assertInstanceOf('Fapi\Component\Routing\Route\Route', $router->resolveRoute($source));
+    }
+
+    public function invalidPathProvider()
+    {
+        return array(
+            array('/fsdfdsfsdfsd'),
+            array('/v1/orders/1321d'),
+        );
+    }
+
+    /**
+     * @dataProvider        invalidPathProvider
+     * @expectedException   Fapi\Component\Routing\Exception\ResourceNotFoundException
+     */
+    public function testResolveRouteFail($uri)
+    {
+        $source = 'fapi/Component/Routing/Tests/_resources/routing.yml';
+        $request = new Request();
+        $request
+            ->server
+                ->set('REQUEST_URI', $uri);
+        $router = new Router($request);
+        $this->assertInstanceOf('Fapi\Component\Routing\Route\Route', $router->resolveRoute($source));
+    }
 }
