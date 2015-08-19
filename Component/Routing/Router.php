@@ -38,6 +38,11 @@ class Router implements RouterInterface
      */
     protected $resource;
 
+    /**
+     * Array of known file types we can load resource from
+     */
+    public static $knownSourceTypes = array('yml', 'json');
+
     public function __construct(Request $request)
     {
         $this->matcher = new Matcher();
