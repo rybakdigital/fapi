@@ -72,6 +72,26 @@ class RouterTest extends TestCase
         $this->assertCount($expectedCount, $routes);
     }
 
+    public function resourceProviderForException()
+    {
+        return array(
+            array('fapi/Component/Routing/Tests/_resources/routing.php'),
+            array('fapi/Component/Routing/Tests/_resources/routing.xml'),
+            array('fapi/Component/Routing/Tests/_resources/routing.ini'),
+        );
+    }
+
+    /**
+     * @dataProvider            resourceProviderForException
+     * @expectedException       Exception
+     */
+    public function testLoadResourceFail($resource)
+    {
+        $router = new Router(new Request);
+        $routes = $router->loadResource($resource);
+        $this->assertTrue(is_array($routes));
+    }
+
     /**
      * @dataProvider resourceProvider
      */

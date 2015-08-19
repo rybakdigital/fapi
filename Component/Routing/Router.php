@@ -147,7 +147,7 @@ class Router implements RouterInterface
 
         // Check if source is of a known type
         // And if not then use default: routing.yml
-        if (!in_array($extension, self::$knownSourceTypes)) {
+        if (!in_array($extension, self::$knownSourceTypes) && empty($extension)) {
             $source = $source . '/routing.yml';
         }
 
@@ -169,13 +169,12 @@ class Router implements RouterInterface
 
         if (file_exists($source)) {
             $file = file_get_contents($source);
-
             if ($extension == 'yml') {
                 $array  = Yaml::parse($file);
             } elseif ($extension == 'json') {
                 $array  = json_decode($file, true);
             } else {
-                throw new Exception("Unsupported routing file type. Routes can only be loaded from yml or json files");
+                throw new \Exception("Unsupported routing file type. Routes can only be loaded from yml or json files");
             }
 
             if (is_array($array)) {
