@@ -1,0 +1,12 @@
+routes:
+    moreSaveOrders:
+        path:   /
+        methods: ['POST']
+        controller: orders
+        calls: saveRequest
+
+    listOrders:
+        path:   /
+        methods: ['GET']
+        controller: orders
+        calls: listRequest
