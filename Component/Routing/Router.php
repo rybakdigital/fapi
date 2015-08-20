@@ -7,6 +7,7 @@ use Fapi\Component\Routing\Matcher;
 use Fapi\Component\Routing\Route\Route;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
+use Ucc\File\Path\Path;
 
 /**
  * Fapi\Component\Routing\Router
@@ -33,9 +34,14 @@ class Router implements RouterInterface
     protected $request;
 
     /**
-     * @var mixed
+     * @var array
      */
     protected $resource;
+
+    /**
+     * Array of known file types we can load resource from
+     */
+    public static $knownSourceTypes = array('yml', 'json');
 
     public function __construct(Request $request)
     {
@@ -48,11 +54,11 @@ class Router implements RouterInterface
      *
      * @return Route
      */
-    public function resolveRoute()
+    public function resolveRoute($source = null)
     {
         return $this
             ->matcher
-                ->match($this->getRouteCollection(), $this->request);
+                ->match($this->getRouteCollection($source), $this->request);
     }
 
     /**
@@ -60,48 +66,35 @@ class Router implements RouterInterface
      *
      * @return RouteCollection
      */
-    public function getRouteCollection()
+    public function getRouteCollection($source = null)
     {
         if (null === $this->collection) {
-            $this->collection = $this->loadRouteCollection();
+            $this->collection = $this->loadRouteCollection($source);
         }
 
         return $this->collection;
     }
 
-    public function getResourse()
+    public function getResourse($source = null)
     {
         if (null === $this->resource) {
-            $this->resource = $this->loadResurce();
+            $this->resource = $this->loadResource($source);
         }
 
         return $this->resource;
     }
 
-    private function resolveFilePathSlashes($path)
-    {
-        if (false !== $lastPos = strrpos($path, '/')) {
-            if (($lastPos + 1) != strlen($path)) {
-                $path = $path.'/';
-            }
-        }
-        if (0 == $firstPos = strpos($path, '/')) {
-            $path = substr($path, 1);
-        }
-        
-        return $path;
-    }
-
     /**
-     * Loads RouteCollection from resource
+     * Loads RouteCollection from source
      *
-     * @return RouteCollection
+     * @param   string      $source   Path to resource
+     * @return  RouteCollection
      */
-    public function loadRouteCollection()
+    public function loadRouteCollection($source = null)
     {
         $collection = new RouteCollection();
 
-        $routes = $this->loadResurce();
+        $routes = $this->loadResource($source);
 
         foreach ($routes as $name => $route) {
             $collection->add($name, $this->parseRoute($route));
@@ -111,33 +104,65 @@ class Router implements RouterInterface
     }
 
     /**
-     * Loads array of routes from resource
+     * Resolves name of the file to get resource from
+     *
+     * @param   string      $source
+     * @return  string      File to get resource from
      */
-    public function loadResurce($resource = null)
+    public function resolveResorceSource($source = null)
     {
-        $routes = array();
-
+        // Base path to use
         $basePath = '../';
 
-        if ($resource == null) {
-            $resource = "app/config/routing.yml";
+        // if no source has been specified
+        // look up default source
+
+        if ($source == null) {
+            $source = "app/config/routing.yml";
         }
 
-        if (!(substr($resource, -3, 3) == 'yml')) {
-            $resource = $resource . '/routing.yml';
+        // Check resource extension
+        $extension = Path::getExtension($source);
+
+        // Check if source is of a known type
+        // And if not then use default: routing.yml
+        if (!in_array($extension, self::$knownSourceTypes) && empty($extension)) {
+            $source = $source . '/routing.yml';
         }
 
-        if (file_exists($basePath . $resource)) {
-            $file = file_get_contents($basePath . $resource);
+        return $basePath . $source;
+    }
 
-            $array  = Yaml::parse($file);
+    /**
+     * Loads array of routes from resource
+     *
+     * @param   string      $source   Path to resource
+     * @return  array       Array of routes
+     */
+    public function loadResource($source = null)
+    {
+
+        $routes     = array();
+        $source     = $this->resolveResorceSource($source);
+        $extension  = Path::getExtension($source);
+
+        if (file_exists($source)) {
+            $file = file_get_contents($source);
+            if ($extension == 'yml') {
+                $array  = Yaml::parse($file);
+            } elseif ($extension == 'json') {
+                $array  = json_decode($file, true);
+            } else {
+                throw new \Exception("Unsupported routing file type. Routes can only be loaded from yml or json files");
+            }
 
             if (is_array($array)) {
 
                 if (isset($array['imports'])) {
                     foreach ($array['imports'] as $import) {
                         if (isset($import['resource'])) {
-                            foreach ($this->loadResurce($import['resource']) as $name => $route) {
+                            $extraSource = $this->resolveResorceSource($import['resource']);
+                            foreach ($this->loadResource($import['resource']) as $name => $route) {
                                 $routes[$name] = $route;
                             }
                         }
@@ -151,6 +176,8 @@ class Router implements RouterInterface
                 }
             }
         }
+
+        $this->resource = $routes;
 
         return $routes;
     }

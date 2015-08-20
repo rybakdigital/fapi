@@ -1,0 +1,12 @@
+{
+  "routes": {
+    "getProducts": {
+      "path": "products",
+      "methods": [
+        "GET"
+      ],
+      "controller": "products",
+      "calls": "index"
+    }
+  }
+}

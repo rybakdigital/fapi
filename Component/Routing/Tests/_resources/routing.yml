@@ -1,0 +1,23 @@
+imports:
+    - { resource: fapi/Component/Routing/Tests/_resources/routing_extra.yml }
+    - { resource: fapi/Component/Routing/Tests/_resources/more }
+routes:
+    saveOrders:
+        path:   /
+        methods: ['POST']
+        controller: orders
+        calls: saveRequest
+
+    listOrders:
+        path:   /
+        methods: ['GET']
+        controller: orders
+        calls: listRequest
+
+    readOrder:
+        path:   v1/orders/{orderSpec}
+        methods: ['GET', 'PUT', 'POST']
+        controller: orders
+        calls: readRequest
+        requirements:
+            orderSpec: int

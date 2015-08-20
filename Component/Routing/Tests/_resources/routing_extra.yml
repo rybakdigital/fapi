@@ -1,0 +1,9 @@
+routes:
+    readProduct:
+        path:   v1/products/{productName}/category/{category}
+        methods: ['GET']
+        controller: orders
+        calls: readRequest
+        requirements:
+            productName: str
+            category:   str
