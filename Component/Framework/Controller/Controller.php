@@ -4,6 +4,7 @@ namespace Fapi\Component\Framework\Controller;
 
 use Ucc\Data\Validator\Validator;
 use Ucc\Data\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fapi\Component\Framework\Controller\Controller
@@ -20,9 +21,20 @@ class Controller
      */
     protected $validator;
 
-    public function __construct()
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function __construct($request = null)
     {
+        if (is_null($request)) {
+            $request = Request::createFromGlobals();
+        }
+
+        $this->setRequest($request);
         $this->setValidator(new Validator());
+        $this->passRequestData();
     }
 
     /**
@@ -44,6 +56,50 @@ class Controller
     public function setValidator(ValidatorInterface $validator)
     {
         $this->validator = $validator;
+
+        return $this;
+    }
+
+    /**
+     * Gets request
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Sets request
+     *
+     * @param   Request    $request
+     * @return  Controller
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public function passRequestData()
+    {
+        $this
+            ->getValidator()
+                ->setInputData($this
+                    ->getRequest()
+                        ->query
+                            ->all()
+                );
+
+        $this
+            ->getValidator()
+                ->setInputData($this
+                    ->getRequest()
+                        ->request
+                            ->all()
+                );
 
         return $this;
     }
