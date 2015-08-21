@@ -28,6 +28,10 @@ class Controller
 
     public function __construct($request = null)
     {
+        if (is_null($request)) {
+            $request = Request::createFromGlobals();
+        }
+
         $this->setRequest($request);
         $this->setValidator(new Validator());
         $this->passRequestData();
