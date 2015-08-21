@@ -162,6 +162,7 @@ class RouterTest extends TestCase
         return array(
             array('/'),
             array('/v1/orders/1'),
+            array('/v1/products/sample-product/category/shoes'),
         );
     }
 
@@ -175,6 +176,8 @@ class RouterTest extends TestCase
         $request
             ->server
                 ->set('REQUEST_URI', $uri);
+        $request
+            ->setMethod('GET');
         $router = new Router($request);
         $this->assertInstanceOf('Fapi\Component\Routing\Route\Route', $router->resolveRoute($source));
     }

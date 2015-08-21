@@ -36,7 +36,7 @@ class Matcher implements MatcherInterface
      */
     private static $regexOperands = array(
         'int' => '\d+',
-        'str' => '\w+',
+        'str' => '[a-z0-9-]+',
     );
 
     public function __construct()
@@ -116,5 +116,7 @@ class Matcher implements MatcherInterface
         if (array_key_exists($operand, self::$regexOperands)) {
             return self::$regexOperands[$operand];
         }
+
+        return '';
     }
 }
