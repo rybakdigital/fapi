@@ -8,6 +8,7 @@ use Fapi\Component\Routing\Route\Route;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 use Ucc\File\Path\Path;
+use Ucc\File\File;
 
 /**
  * Fapi\Component\Routing\Router
@@ -147,11 +148,11 @@ class Router implements RouterInterface
         $extension  = Path::getExtension($source);
 
         if (file_exists($source)) {
-            $file = file_get_contents($source);
+            $content = File::load($source);
             if ($extension == 'yml') {
-                $array  = Yaml::parse($file);
+                $array  = Yaml::parse($content);
             } elseif ($extension == 'json') {
-                $array  = json_decode($file, true);
+                $array  = json_decode($content, true);
             } else {
                 throw new \Exception("Unsupported routing file type. Routes can only be loaded from yml or json files");
             }

@@ -116,5 +116,7 @@ class Matcher implements MatcherInterface
         if (array_key_exists($operand, self::$regexOperands)) {
             return self::$regexOperands[$operand];
         }
+
+        return '';
     }
 }
