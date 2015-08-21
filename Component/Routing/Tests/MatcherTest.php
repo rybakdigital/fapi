@@ -11,7 +11,7 @@ class MatcherTest extends TestCase
     {
         return array(
             array('int', '\d+'),
-            array('str', '\w+'),
+            array('str', '[a-z0-9-]+'),
             array('something', ''),
         );
     }
