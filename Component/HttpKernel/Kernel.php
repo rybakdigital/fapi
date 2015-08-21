@@ -175,7 +175,7 @@ abstract class Kernel
             }
 
             return array(
-                'controller'    => new $controllerClass,
+                'controller'    => new $controllerClass($request),
                 'callable'      => $callable
             );
         }
