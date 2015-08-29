@@ -83,6 +83,11 @@ class Controller
         return $this;
     }
 
+    /**
+     * Helper method. Passes request data.
+     *
+     * @return  Controller
+     */
     public function passRequestData()
     {
         $this
