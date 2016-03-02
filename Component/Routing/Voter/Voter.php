@@ -56,7 +56,7 @@ class Voter
             }
         }
 
-        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $this->request->getPathInfo()), 404);
+        throw new ResourceNotFoundException(sprintf('No routes found for path %s and method %s.', $this->request->getPathInfo(), $this->request->getMethod()), 404);
     }
 
     /**
