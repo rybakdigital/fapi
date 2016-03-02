@@ -39,10 +39,13 @@ class Controller
      */
     protected $config;
 
-    public function __construct(Config $config, $request = null)
+    public function __construct(Config $config = null, $request = null)
     {
         if (is_null($request)) {
             $request = Request::createFromGlobals();
+        }
+        if (is_null($config)) {
+            $config = new Config;
         }
 
         $this->config = $config;
