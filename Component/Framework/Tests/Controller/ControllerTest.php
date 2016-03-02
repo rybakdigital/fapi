@@ -31,7 +31,7 @@ class ContrllerTest extends TestCase
     public function testSetRequest()
     {
         $controller     = new Controller;
-        $request      = new Request;
+        $request        = new Request;
         $this->assertInstanceOf(get_class($controller), $controller->setRequest($request));
     }
 }

@@ -3,6 +3,7 @@
 namespace Fapi\Component\HttpKernel;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 use Fapi\Component\Routing\Router;
 use Ucc\Config\Config;
@@ -21,6 +22,7 @@ abstract class Kernel
     protected $config;
     protected $startTime;
     protected $rootDir;
+    protected $response;
 
     /**
      * Constructor
@@ -30,6 +32,7 @@ abstract class Kernel
         $this->startTime    = microtime(true);
         $this->rootDir      = $this->getRootDir();
         $this->config       = new Config();
+        $this->response     = new Response;
     }
 
     /**
@@ -49,16 +52,40 @@ abstract class Kernel
      */
     public function handle(Request $request)
     {
-        $this->loadConfiguration();
+        try {
+            $this->loadConfiguration();
 
-        // Now that Configuration is loaded let's resolve controller
-        // for given request.
-        $calls = $this->resolveController($request);
-        $controller = $calls['controller'];
-        $callable   = $calls['callable'];
+            // Now that Configuration is loaded let's resolve controller
+            // for given request.
+            $calls = $this->resolveController($request);
+            $controller = $calls['controller'];
+            $callable   = $calls['callable'];
 
-        // Resolve arguments before calling controller
-        $controller->$callable();
+            // Resolve arguments before calling controller
+            $res = $controller->$callable();
+
+            // Check if controller returned Response
+            // and if so let's use it as our response
+            if (is_a($res, 'Symfony\Component\HttpFoundation\Response')) {
+                $this->response = $res;
+            }
+
+        } catch (\Exception $e) {
+            $error = new \StdClass;
+            $error->message = $e->getMessage();
+            $error->code    = $e->getCode();
+            $this->response->setStatusCode($e->getCode());
+            $this->response->setContent(json_encode($error));
+            $this->response->headers->set('Content-Type', 'application/json');
+        }
+
+        // Send response
+        if ($request->getRequestFormat() == 'json') {
+            $this->response->headers->set('Content-Type', 'application/json');
+        }
+
+        $this->response->send();
+
     }
 
     /**
@@ -131,11 +158,14 @@ abstract class Kernel
                             }
                         }
                     }
-                // Save parameters in the Config
+                // Direct parameters input
                 } elseif ($key == 'parameters') {
-                    foreach ($params as $key => $param) {
-                        $this->config->setParameter($key, $param);
+                    foreach ($params as $paramName => $param) {
+                        $this->config->setParameter($paramName, $param);
                     }
+                // Save parameters in the Config
+                } else {
+                    $this->config->setParameter($key, $params);
                 }
             }
         }
@@ -175,7 +205,7 @@ abstract class Kernel
             }
 
             return array(
-                'controller'    => new $controllerClass($request),
+                'controller'    => new $controllerClass($this->getConfig(), $request),
                 'callable'      => $callable
             );
         }
