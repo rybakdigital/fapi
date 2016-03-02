@@ -56,7 +56,7 @@ class Voter
             }
         }
 
-        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $this->request->getPathInfo()));
+        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $this->request->getPathInfo()), 404);
     }
 
     /**
@@ -78,12 +78,14 @@ class Voter
         }
 
         foreach ($this->candidates as $key => $route) {
-            $priority = 0;
+            $isCandidate    = true;
+            $priority       = 0;
+
             $this->establishPriority(count($route->getRequirements()));
 
             // Remove from candidates list those Routes that Method does not match Request method
             if (!in_array($this->request->getMethod(), $route->getMethods())) {
-                unset($this->candidates[$key]);
+                $isCandidate = false;
             }
 
             $routeParts = explode('/', $route->getPath());
@@ -107,7 +109,9 @@ class Voter
 
             }
 
-            $this->prioritised[$priority][] = $route;
+            if ($isCandidate) {
+                $this->prioritised[$priority][] = $route;
+            }
         }
     }
 
